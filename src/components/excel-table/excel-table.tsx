@@ -1,120 +1,94 @@
 import React from "react";
+import { Table, Tabs } from "antd";
 
-import { Table } from "antd";
+// סוגי עמודות
+interface InsuranceData {
+  id: string;
+  mainBranch: string;
+  subBranch: string;
+  productType: string;
+  company: string;
+  insurancePeriod: string;
+  additionalDetails: string;
+  premium: string;
+  premiumType: string;
+  policyNumber: string;
+  planClassification: string;
+}
 
-const columns = [
-  {
-    title: "תעודת זהות",
+function InsuranceTable(props: { data: any[] }) {
+  // עיבוד הנתונים
+  const dataSource: InsuranceData[] = props.data
+    .filter((item) => item[0] && item[0].trim() !== "")
+    .map((item, index) => ({
+      id: item[0],
+      mainBranch: item[1],
+      subBranch: item[2],
+      productType: item[3],
+      company: item[4],
+      insurancePeriod: item[5],
+      additionalDetails: item[6],
+      premium: item[7],
+      premiumType: item[8],
+      policyNumber: item[9],
+      planClassification: item[10],
+    }));
 
-    dataIndex: "תעודת זהות",
+  // הגדרת עמודות
+  const columns = [
+    { title: "תעודת זהות", dataIndex: "id", key: "id" },
+    { title: "ענף ראשי", dataIndex: "mainBranch", key: "mainBranch" },
+    { title: "ענף משני", dataIndex: "subBranch", key: "subBranch" },
+    { title: "סוג מוצר", dataIndex: "productType", key: "productType" },
+    { title: "חברה", dataIndex: "company", key: "company" },
+    {
+      title: "תקופת ביטוח",
+      dataIndex: "insurancePeriod",
+      key: "insurancePeriod",
+    },
+    {
+      title: "פרטים נוספים",
+      dataIndex: "additionalDetails",
+      key: "additionalDetails",
+    },
+    { title: 'פרמיה בש"ח', dataIndex: "premium", key: "premium" },
+    { title: "סוג פרמיה", dataIndex: "premiumType", key: "premiumType" },
+    { title: "מספר פוליסה", dataIndex: "policyNumber", key: "policyNumber" },
+    {
+      title: "סיווג תוכנית",
+      dataIndex: "planClassification",
+      key: "planClassification",
+    },
+  ];
 
-    key: "id",
-  },
-
-  {
-    title: "ענף ראשי",
-
-    dataIndex: "ענף ראשי",
-
-    key: "mainBranch",
-  },
-
-  {
-    title: "ענף משני",
-
-    dataIndex: "ענף משני",
-
-    key: "subBranch",
-  },
-
-  {
-    title: "סוג מוצר",
-
-    dataIndex: "סוג מוצר",
-
-    key: "productType",
-  },
-
-  {
-    title: "חברה",
-
-    dataIndex: "חברה",
-
-    key: "company",
-  },
-
-  {
-    title: "תקופת ביטוח",
-
-    dataIndex: "תקופת ביטוח",
-
-    key: "insurancePeriod",
-  },
-
-  {
-    title: "פרטים נוספים",
-
-    dataIndex: "פרטים נוספים",
-
-    key: "additionalDetails",
-  },
-
-  {
-    title: 'פרמיה בש"ח',
-
-    dataIndex: 'פרמיה בש"ח',
-
-    key: "premium",
-  },
-
-  {
-    title: "סוג פרמיה",
-
-    dataIndex: "סוג פרמיה",
-
-    key: "premiumType",
-  },
-
-  {
-    title: "מספר פוליסה",
-
-    dataIndex: "מספר פוליסה",
-
-    key: "policyNumber",
-  },
-
-  {
-    title: "סיווג תוכנית",
-
-    dataIndex: "סיווג תוכנית",
-
-    key: "planClassification",
-  },
-];
-
-function ExcelTable(props: { data: any[]; key: number }) {
-  const mainBranches = Array.from(
-    new Set(props.data.map((item: any) => item["ענף ראשי"]))
-  );
-
-  const title = `${mainBranches.join(", ")} `;
-
+  // קיבוץ לפי ענף ראשי
+  const groupedData = dataSource.reduce((acc, item) => {
+    acc[item.mainBranch] = acc[item.mainBranch] || [];
+    acc[item.mainBranch].push(item);
+    return acc;
+  }, {} as Record<string, InsuranceData[]>);
   return (
-    <Table
-      key={props.key}
-      title={() => (
-        <h1>
-          {title} - ({props.data.length})
-        </h1>
-      )}
-      columns={columns}
-      dataSource={props.data}
-      rowKey={(record) =>
-        `${record["תעודת זהות"]}-${record["מספר פוליסה"]}-${record['פרמיה בש"ח']}`
-      }
-      pagination={{ pageSize: 3 }}
-    />
+    <Tabs
+      hideAdd
+      type="card"
+      defaultActiveKey="1"
+      style={{ marginTop: "50px" }}
+    >
+      {Object.keys(groupedData).map((branch, index) => (
+        <Tabs.TabPane
+          tab={branch + " (" + groupedData[branch].length + ")"}
+          key={index.toString()}
+        >
+          <Table
+            dataSource={groupedData[branch]}
+            columns={columns}
+            rowKey="policyNumber"
+            pagination={{ pageSize: 10 }}
+          />
+        </Tabs.TabPane>
+      ))}
+    </Tabs>
   );
 }
 
-export default ExcelTable;
+export default InsuranceTable;

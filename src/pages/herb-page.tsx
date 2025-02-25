@@ -14,7 +14,7 @@ import {
 
 import dayjs from "dayjs";
 
-import ExcelTable from "../components/excel-table/excel-table";
+import InsuranceTable from "../components/excel-table/excel-table";
 
 const { Item } = Form;
 
@@ -277,28 +277,7 @@ const MyForm: React.FC = () => {
           {loading ? (
             <Spin size="large" />
           ) : excelData ? (
-            Object.keys(excelData).map((sheetName, index) => {
-              const sheetData = excelData[sheetName];
-
-              if (sheetData.length > 0) {
-                return (
-                  <div
-                    key={sheetName}
-                    style={{
-                      border: "2px solid blue",
-
-                      padding: "10px",
-
-                      margin: "10px 0",
-                    }}
-                  >
-                    <ExcelTable key={index} data={sheetData} />
-                  </div>
-                );
-              }
-
-              return null;
-            })
+            <InsuranceTable data={excelData} />
           ) : (
             <p>אין מידע להציג</p>
           )}
