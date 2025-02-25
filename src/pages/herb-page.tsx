@@ -105,7 +105,7 @@ const MyForm: React.FC = () => {
 
       startMethod();
 
-      const aa: {
+      const data: {
         id: string;
         bod: string;
         iis: string;
@@ -117,20 +117,17 @@ const MyForm: React.FC = () => {
         iis: values.birthDate ? values.idIssueDate.format("YYYY-MM-DD") : "",
       };
 
-      const response = await fetch(
-        "http://localhost:3002/api/userdata",
-        //"http://localhost:2020/api/test/postexcel",
-        {
-          // החלף בכתובת ה-API שלך
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-user-id": "4444",
-          },
+      const response = await fetch("http://localhost:3002/api/userdata", {
+        // החלף בכתובת ה-API שלך
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-user-id": "" + data.userid,
+          "x-client-id": "" + data.id,
+        },
 
-          body: JSON.stringify(aa),
-        }
-      );
+        body: JSON.stringify(data),
+      });
 
       const result = await response.json();
 
