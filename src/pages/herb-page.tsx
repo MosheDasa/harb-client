@@ -107,19 +107,13 @@ const MyForm: React.FC = () => {
 
       const aa: {
         id: string;
-
         bod: string;
-
         iis: string;
-
         userid: number;
       } = {
         userid: 1212,
-
         id: values.idField,
-
         bod: values.birthDate ? values.birthDate.format("YYYY-MM-DD") : "",
-
         iis: values.birthDate ? values.idIssueDate.format("YYYY-MM-DD") : "",
       };
 
@@ -131,6 +125,7 @@ const MyForm: React.FC = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "x-user-id": "4444",
           },
 
           body: JSON.stringify(aa),
